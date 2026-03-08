@@ -24,9 +24,3 @@ Aryan Sisodia Contribution
 - Dataset preparation
 - Flask backend
 - Render cloud deployment
-
-        ▼
-     AI Model
-        │
-        ▼
- Pump ON/OFF Decision
