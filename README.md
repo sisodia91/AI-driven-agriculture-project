@@ -25,17 +25,6 @@ Aryan Sisodia Contribution
 - Flask backend
 - Render cloud deployment
 
-Soil Moisture Sensor
-        │
-        ▼
-      ESP32
-        │
-        ▼
-   Internet (WiFi)
-        │
-        ▼
-   Flask API (Render)
-        │
         ▼
      AI Model
         │
