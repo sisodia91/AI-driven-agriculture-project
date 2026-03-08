@@ -24,3 +24,20 @@ Aryan Sisodia Contribution
 - Dataset preparation
 - Flask backend
 - Render cloud deployment
+
+Soil Moisture Sensor
+        │
+        ▼
+      ESP32
+        │
+        ▼
+   Internet (WiFi)
+        │
+        ▼
+   Flask API (Render)
+        │
+        ▼
+     AI Model
+        │
+        ▼
+ Pump ON/OFF Decision
