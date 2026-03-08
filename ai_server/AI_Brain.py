@@ -13,6 +13,8 @@ model = joblib.load(model_path)
 
 # get token from environment variable
 BLYNK_TOKEN = os.getenv("BLYNK_TOKEN")
+if BLYNK_TOKEN is None:
+    print("WARNING: BLYNK TOKEN NOT FOUND")
 
 
 def farm_health(soil, temp, humidity, light):
@@ -85,11 +87,14 @@ def predict():
 
     # send results to Blynk
     try:
-       requests.get(
-    f"https://blynk.cloud/external/api/update?token={BLYNK_TOKEN}&V5={round(hours_to_dry,2)}&V6={health}"
-     )
-    except:
-        pass
+        r = requests.get(
+            f"https://blynk.cloud/external/api/update?token={BLYNK_TOKEN}&V5={round(hours_to_dry,2)}&V6={health}",
+            timeout=5
+        )
+        print("BLYNK RESPONSE:", r.text)
+
+    except Exception as e:
+        print("BLYNK ERROR:", e)
 
     return jsonify({
         "hours_to_dry": round(hours_to_dry, 2),
