@@ -1,163 +1,132 @@
 <!DOCTYPE html>
+
 <html>
 <head>
     <title>Smart Agriculture Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+```
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
+    body {
+        background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+        color:white;
+        padding:20px;
+    }
 
-        body {
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            color: white;
-            padding: 20px;
-        }
+    h1 { text-align:center; margin-bottom:20px; }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 32px;
-        }
+    .container { max-width:1200px; margin:auto; }
 
-        h2 {
-            margin: 30px 0 10px;
-            font-weight: 500;
-        }
+    .card {
+        background: rgba(255,255,255,0.08);
+        backdrop-filter: blur(10px);
+        border-radius:15px;
+        padding:20px;
+        margin-bottom:25px;
+        box-shadow:0 8px 20px rgba(0,0,0,0.3);
+    }
 
-        .container {
-            max-width: 1200px;
-            margin: auto;
-        }
+    .stats {
+        display:flex;
+        justify-content:space-between;
+        gap:15px;
+        flex-wrap:wrap;
+    }
 
-        .card {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-            margin-bottom: 25px;
-        }
+    .stat {
+        flex:1;
+        text-align:center;
+        padding:15px;
+        border-radius:10px;
+        background: rgba(255,255,255,0.1);
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            overflow: hidden;
-            border-radius: 10px;
-        }
+    table { width:100%; border-collapse:collapse; }
 
-        th, td {
-            padding: 12px;
-            text-align: center;
-        }
+    th, td { padding:10px; text-align:center; }
 
-        th {
-            background: rgba(0, 255, 140, 0.7);
-            color: black;
-        }
+    th { background:#00ff87; color:black; }
 
-        tr:nth-child(even) {
-            background: rgba(255,255,255,0.05);
-        }
+    tr:nth-child(even){ background:rgba(255,255,255,0.05); }
 
-        tr:hover {
-            background: rgba(0,255,140,0.2);
-            transition: 0.3s;
-        }
+    canvas { background:white; border-radius:10px; }
 
-        canvas {
-            background: white;
-            border-radius: 10px;
-            padding: 10px;
-        }
+    .btn {
+        padding:10px 20px;
+        background:linear-gradient(45deg,#00ff87,#60efff);
+        border:none;
+        border-radius:8px;
+        cursor:pointer;
+        font-weight:600;
+    }
+</style>
+```
 
-        .btn {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            background: linear-gradient(45deg, #00ff87, #60efff);
-            color: black;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(0,255,140,0.4);
-        }
-
-        .result {
-            margin-top: 15px;
-            font-size: 16px;
-            line-height: 1.5;
-        }
-
-        @media(max-width: 768px) {
-            h1 {
-                font-size: 24px;
-            }
-
-            table {
-                font-size: 12px;
-            }
-        }
-    </style>
 </head>
 
 <body>
 
 <div class="container">
 
-    <h1>🌱 Smart Agriculture Dashboard</h1>
+<h1>🌱 Smart Agriculture Dashboard</h1>
 
-    <!-- TABLE -->
-    <div class="card">
-        <h2>📋 Sensor History</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Sr No</th>
-                    <th>Temperature</th>
-                    <th>Humidity</th>
-                    <th>Soil</th>
-                    <th>Health</th>
-                    <th>Dry Time (hrs)</th>
-                    <th>Time</th>
-                </tr>
-            </thead>
-            <tbody id="data-table"></tbody>
-        </table>
-    </div>
+<!-- LIVE STATS -->
 
-    <!-- GRAPH -->
-    <div class="card">
-        <h2>📊 Farm Data Graph</h2>
-        <canvas id="tempChart"></canvas>
-    </div>
-
-    <!-- CROP RECOMMENDATION -->
-    <div class="card">
-        <h2>🌾 Smart Crop Recommendation</h2>
-        <button class="btn" onclick="getCrop()">Analyze Farm</button>
-        <p id="cropResult" class="result">Click to analyze current farm data..</p>
-    </div>
-
+<div class="card stats">
+    <div class="stat">🌡 Temp<br><b id="liveTemp">--</b></div>
+    <div class="stat">💧 Humidity<br><b id="liveHumidity">--</b></div>
+    <div class="stat">🌱 Soil<br><b id="liveSoil">--</b></div>
+    <div class="stat">📊 Health<br><b id="liveHealth">--</b></div>
 </div>
 
+<!-- MOTOR STATUS -->
+
 <div class="card">
-    <h2>📁 Export Dataset</h2>
-    <button class="btn" onclick="downloadCSV()">Download CSV</button>
+    <h2>🚰 Irrigation Status</h2>
+    <p id="motorStatus">Checking...</p>
+</div>
+
+<!-- GRAPH -->
+
+<div class="card">
+    <h2>📊 Farm Data Graph</h2>
+    <p style="font-size:12px;">🔄 Auto-updating every 5 seconds</p>
+    <canvas id="chart"></canvas>
+</div>
+
+<!-- TABLE -->
+
+<div class="card">
+    <h2>📋 Sensor History</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Temp</th>
+                <th>Humidity</th>
+                <th>Soil</th>
+                <th>Health</th>
+                <th>Dry Time</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody id="table"></tbody>
+    </table>
+</div>
+
+<!-- CROP -->
+
+<div class="card">
+    <h2>🌾 Crop Recommendation</h2>
+    <button class="btn" onclick="getCrop()">Analyze</button>
+    <p id="cropResult">Click to analyze...</p>
+</div>
+
 </div>
 
 <script>
@@ -167,91 +136,73 @@ async function loadData() {
     const res = await fetch("/history");
     const data = await res.json();
 
-    const table = document.getElementById("data-table");
-    table.innerHTML = "";
+    let labels=[], temp=[], soil=[], health=[];
 
-    let labels = [];
-    let tempData = [];
-    let soilData = [];
-    let healthData = [];
+    const table = document.getElementById("table");
+    table.innerHTML="";
 
-    data.forEach((item, index) => {
-        table.innerHTML += `
-            <tr>
-                <td>${index + 1}</td>
-                <td>${item.temperature}</td>
-                <td>${item.humidity}</td>
-                <td>${item.soil_moisture}</td>
-                <td>${item.health_score}</td>
-                <td>${item.prediction}</td>
-                <td>${item.timestamp}</td>
-            </tr>
-        `;
+    data.forEach((item,i)=>{
+        table.innerHTML+=`
+        <tr>
+            <td>${i+1}</td>
+            <td>${item.temperature}</td>
+            <td>${item.humidity}</td>
+            <td>${item.soil_moisture}</td>
+            <td style="color:${item.health_score>75?'lightgreen':item.health_score>50?'orange':'red'}">
+                ${item.health_score}
+            </td>
+            <td>🌵 ${item.prediction} hrs</td>
+            <td>${item.timestamp}</td>
+        </tr>`;
 
         labels.push(item.timestamp);
-        tempData.push(item.temperature);
-        soilData.push(item.soil_moisture);
-        healthData.push(item.health_score);
+        temp.push(item.temperature);
+        soil.push(item.soil_moisture);
+        health.push(item.health_score);
     });
 
-    if (chart) chart.destroy();
+    if(data.length>0){
+        let latest=data[data.length-1];
 
-    const ctx = document.getElementById('tempChart').getContext('2d');
+        liveTemp.innerText=latest.temperature;
+        liveHumidity.innerText=latest.humidity;
+        liveSoil.innerText=latest.soil_moisture;
+        liveHealth.innerText=latest.health_score;
 
-    chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels.reverse(),
-            datasets: [
-                { label: 'Temperature', data: tempData.reverse(), borderWidth: 2 },
-                { label: 'Soil Moisture', data: soilData.reverse(), borderWidth: 2 },
-                { label: 'Health Score', data: healthData.reverse(), borderWidth: 2 }
+        motorStatus.innerText =
+            latest.soil_moisture<40 ? "💧 Motor ON" : "🛑 Motor OFF";
+    }
+
+    if(chart) chart.destroy();
+
+    chart=new Chart(document.getElementById("chart"),{
+        type:'line',
+        data:{
+            labels:labels.reverse(),
+            datasets:[
+                {label:'Temperature (°C)',data:temp.reverse(),borderWidth:2,tension:0.4},
+                {label:'Soil (%)',data:soil.reverse(),borderWidth:2,tension:0.4},
+                {label:'Health (%)',data:health.reverse(),borderWidth:2,tension:0.4}
             ]
         },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    labels: { color: 'white' }
-                }
-            },
-            scales: {
-                x: { ticks: { color: 'white' } },
-                y: { beginAtZero: true, ticks: { color: 'white' } }
+        options:{
+            plugins:{legend:{labels:{color:'white'}}},
+            scales:{
+                x:{ticks:{color:'white'}},
+                y:{ticks:{color:'white'}}
             }
         }
     });
 }
 
-async function getCrop() {
-    try {
-        const res = await fetch("/crop");
-        const data = await res.json();
-
-        if (data.error) {
-            document.getElementById("cropResult").innerText =
-                "⚠️ No farm data available yet";
-            return;
-        }
-
-        document.getElementById("cropResult").innerText =
-            `🌡 Temp: ${data.temperature}°C | 💧 Humidity: ${data.humidity}% | 🌱 Soil: ${data.soil}% \n  ${data.recommendation.join("\n ")}`;
-    } catch (error) {
-        document.getElementById("cropResult").innerText =
-            "❌ Error connecting to server";
-    }
-}
-async function init() {
-    await loadData();
-    await getCrop();
+async function getCrop(){
+    const res=await fetch("/crop");
+    const data=await res.json();
+    cropResult.innerText=data.recommendation.join("\n");
 }
 
-function downloadCSV() {
-    window.open("/download-csv", "_blank");
-}
-
-init();
-setInterval(init, 5000);
+setInterval(loadData,5000);
+loadData();
 </script>
 
 </body>
