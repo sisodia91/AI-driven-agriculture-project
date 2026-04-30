@@ -17,11 +17,11 @@ CORS(app)
 
 # load trained model
 BASE_DIR = os.path.dirname(__file__)
-model_path = os.path.join(BASE_DIR, "../ai_engine/soil_model.pkl")
+model_path = os.path.abspath(os.path.join(BASE_DIR, "../ai_engine/soil_model.pkl"))
 model = joblib.load(model_path)
 
 # get token from environment variable
-BLYNK_TOKEN = "IWvwGsrSqTh8I02Z-3LHe0K7MNd8YA3U"
+BLYNK_TOKEN = os.getenv("BLYNK_TOKEN")
 if BLYNK_TOKEN is None:
     print("WARNING: BLYNK TOKEN NOT FOUND")
 
@@ -333,4 +333,4 @@ def download_csv():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=5000, debug=True)

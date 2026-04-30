@@ -1,6 +1,9 @@
 import sqlite3
 
-DB_NAME = "farm_data.db"
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_NAME = os.path.join(BASE_DIR, "farm_data.db")
 
 
 def connect_db():
